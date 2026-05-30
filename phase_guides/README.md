@@ -1,15 +1,23 @@
 # Phase Guides
 
-These files expand the high-level roadmap in [ISAAC_SIM_LAB_DRONE_ROADMAP.md](../ISAAC_SIM_LAB_DRONE_ROADMAP.md) into phase-by-phase learning manuals.
+These guides expand [ISAAC_SIM_LAB_DRONE_ROADMAP.md](../ISAAC_SIM_LAB_DRONE_ROADMAP.md) into short working checklists.
 
-## How To Use These Guides
+## How To Use Them
 
-Work in order.
+Work in order. For each phase:
 
-1. Finish the current phase's reading and exercises.
-2. Write the notes the phase asks you to write.
-3. Do not advance just because you read the docs. Advance only after you meet the exit criteria.
-4. If a phase exposes a serious gap, loop within that phase until the gap is closed.
+1. Read only the listed sources first.
+2. Build or run the listed tasks.
+3. Write the requested note.
+4. Move on only when the exit gate is true.
+
+Keep a small personal log with:
+
+- what I ran
+- what failed
+- what I changed
+- what I learned
+- what I will test next
 
 ## File Order
 
@@ -22,20 +30,12 @@ Work in order.
 7. [phase_6_reintroduce_context_knowledge.md](./phase_6_reintroduce_context_knowledge.md)
 8. [phase_7_move_from_ground_target_to_drone_target.md](./phase_7_move_from_ground_target_to_drone_target.md)
 
-## Recommended Working Method
+## Version Rule
 
-For each phase, keep a small note file of your own with these headings:
+Match documentation to your installed version. For real work, prefer Isaac Sim 5.1.0/current GA and Isaac Lab 2.3.x stable docs/source. Avoid building your first thesis implementation on Isaac Sim 6.0 Early Developer Release or Isaac Lab 3.0 beta unless you deliberately choose that risk.
 
-- What I learned
-- What still feels unclear
-- What I built or ran
-- What failed and why
-- What I am ready to do next
+Useful entry points:
 
-This matters because Isaac Sim and Isaac Lab have a steep abstraction stack. If you only read without writing your own interpretation, you will think you understand the framework sooner than you actually do.
-
-## Important Version Note
-
-Prefer stable Isaac Sim documentation and stable Isaac Sim binaries for actual work. Some `latest` Isaac Sim pages point to an early developer release. Use them for navigation if needed, but keep your installation and most of your day-to-day work anchored to a stable release.
-
-For Isaac Lab, use official docs and source together. The docs explain the framework. The source explains how real tasks are actually implemented.
+- Isaac Sim 5.1 docs: https://docs.isaacsim.omniverse.nvidia.com/5.1.0/index.html
+- Isaac Lab 2.3 docs: https://isaac-sim.github.io/IsaacLab/v2.3.0/index.html
+- Isaac Lab GitHub: https://github.com/isaac-sim/IsaacLab

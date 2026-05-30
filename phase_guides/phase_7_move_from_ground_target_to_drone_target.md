@@ -1,273 +1,80 @@
 # Phase 7: Move From Ground Target to Drone Target
 
-## Purpose
+## Goal
 
-This is the final transfer phase in the roadmap. The target is no longer a ground agent constrained by roads and buildings in the original way. It is now another drone, and the problem becomes true aerial pursuit-evasion.
+Convert the target from a ground agent into another drone. This is the start of true aerial pursuit-evasion research.
 
-This is where your long-term research goal starts to look like itself.
+Estimated time: 3 to 6 weeks or more.
 
-## What You Should Know By The End
+## Sources
 
-By the end of this phase, you should have:
+- Add a new robot: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/tutorials/01_assets/add_new_robot.html
+- Import a new asset: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/how-to/import_new_asset.html
+- Write articulation config: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/how-to/write_articulation_cfg.html
+- Simulation performance: https://isaac-sim.github.io/IsaacLab/main/source/how-to/simulation_performance.html
+- Reproducibility: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/features/reproducibility.html
+- Multi-GPU: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/features/multi_gpu.html
+- Curriculum utilities: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/how-to/curriculums.html
+- Sim-to-real policy deployment: https://isaac-sim.github.io/IsaacLab/v2.3.0/source/policy_deployment/index.html
 
-- one first drone-versus-drone pursuit-evasion task
-- a justified 3D action and observation design
-- a clear decision about how much realism and complexity to include
-- one roadmap for scaling beyond two agents later
+## Choose the First 3D Level
 
-## Resource Stack
+Start with one of these:
 
-### 1. Add New Robot
+- quasi-3D: fixed or narrow altitude band, mostly horizontal pursuit
+- structured 3D: full 3D positions inside a bounded flight volume
+- fully free 3D: only after the previous two are stable
 
-Resource:
+Recommendation: start quasi-3D or structured 3D.
 
-- https://isaac-sim.github.io/IsaacLab/main/source/tutorials/01_assets/add_new_robot.html
+## Preserve From Earlier Phases
 
-Use it to learn:
+Keep stable pieces if possible:
 
-- how a new robot would be introduced if the built-in drone is not enough later
-
-### 2. Import New Asset
-
-Resource:
-
-- https://isaac-sim.github.io/IsaacLab/main/source/how-to/import_new_asset.html
-
-Use it to learn:
-
-- the path from external asset to Isaac-ready asset
-
-### 3. Write Articulation Config
-
-Resource:
-
-- https://isaac-sim.github.io/IsaacLab/main/source/how-to/write_articulation_cfg.html
-
-Use it to learn:
-
-- how robot configuration is represented in Isaac Lab
-
-### 4. Simulation Performance and Tuning
-
-Resource:
-
-- https://isaac-sim.github.io/IsaacLab/main/source/how-to/simulation_performance.html
-
-Use it to learn:
-
-- how added agent count and sensing complexity affect training performance
-
-### 5. Reproducibility and Multi-GPU
-
-Resources:
-
-- https://isaac-sim.github.io/IsaacLab/main/source/features/reproducibility.html
-- https://isaac-sim.github.io/IsaacLab/main/source/features/multi_gpu.html
-
-Use them to learn:
-
-- how to keep experiments comparable
-- what scaling options exist once the task grows heavier
-
-### 6. Curriculum Utilities
-
-Resource:
-
-- https://isaac-sim.github.io/IsaacLab/main/source/how-to/curriculums.html
-
-Use it to learn:
-
-- how to stage difficulty instead of throwing the hardest version at the learner immediately
-
-## Design Decisions You Must Make
-
-### 1. How 3D Is the Task Initially?
-
-You have at least three reasonable choices.
-
-#### Option A: Quasi-3D First
-
-- limited altitude change
-- mostly horizontal pursuit-evasion
-- easier bridge from your thesis
-
-#### Option B: Structured 3D
-
-- full position in 3D
-- bounded flight corridor or altitude band
-- moderate complexity increase
-
-#### Option C: Fully Free 3D
-
-- no major simplification beyond environment bounds
-- highest realism and difficulty
-
-Recommendation:
-
-- start with Option A or B
-
-### 2. What Does the Target Know?
-
-Choices include:
-
-- privileged observer pose
-- partial observer state
-- observer detection only when visible
-- noisy relative sensing
-
-Your first version can stay asymmetric and somewhat privileged. Later versions can reduce privilege if the research question calls for it.
-
-### 3. What Is the Action Interface?
-
-Do not change it casually if the earlier phases already stabilized one that serves the research question.
-
-You only need a lower-level action interface if your research genuinely requires low-level control behavior.
-
-## Exact Work Plan
-
-### Step 1: Preserve the Observer Side As Much As Possible
-
-When converting the target to a drone, keep these pieces stable if you can:
-
-- observer control abstraction
+- observer action abstraction
 - observer reward scaffold
-- evaluation metrics
+- metrics
+- scene family
+- context representation
 
-This keeps the research story interpretable.
+Only change the target dynamics first. This keeps the research story interpretable.
 
-### Step 2: Upgrade the Target Dynamics Carefully
+## Do
 
-Before learning, verify that the target drone:
+- Spawn two drones reliably.
+- Verify both are stable before learning.
+- Update observations for relative 3D position, velocity, heading/orientation, altitude difference, and visibility.
+- Update rewards so pursuit/evasion remains meaningful in 3D.
+- Add curriculum: open space first, lower target agility first, then obstacles and richer sensing.
+- Save videos and trajectories for every curriculum stage.
 
-- spawns correctly
-- moves stably
-- respects environment bounds
-- does not create physics pathologies immediately
+## Next Scale-Up Options
 
-### Step 3: Revisit Observations for 3D
-
-You now need to decide what enters the policy in 3D.
-
-Examples:
-
-- relative 3D position and velocity
-- relative heading or orientation cues
-- altitude difference
-- visibility or occlusion status
-- obstacle context in 3D or projected local form
-
-### Step 4: Revisit Rewards for 3D Pursuit-Evasion
-
-Your 2D or mixed-ground logic may not transfer perfectly.
-
-Check whether the reward still promotes:
-
-- meaningful pursuit
-- meaningful evasive behavior
-- nondegenerate episode lengths
-- obstacle-aware movement
-
-### Step 5: Reintroduce Curriculum
-
-Start easier, then harder.
-
-Good curriculum dimensions:
-
-- simpler obstacle density first
-- lower target agility first
-- shorter sensing range assumptions first or later, depending on stability
-- fewer distractors first
-
-### Step 6: Plan the Next Scale-Up
-
-Only after two-agent drone-versus-drone is stable should you consider:
+After stable two-agent drone-vs-drone:
 
 - multiple observers
 - multiple evaders
+- decentralized actors with centralized critic
 - communication constraints
-- decentralized execution with centralized critic designs
+- partial observability
+- stronger domain randomization
+- sim-to-real-oriented control abstractions
 
-## What To Learn Conceptually
+## Thesis Link
 
-### 1. Drone-Versus-Drone Is Not Just a Harder Version of Drone-Versus-Ground
+This phase changes pursuit geometry and reachable states. It is not just the ground-target task with altitude. Preserve thesis metrics and context ablations so the paper can explain what changed.
 
-It changes:
+## Exit Gate
 
-- reachable state space
-- occlusion patterns
-- pursuit geometry
-- control stability requirements
-- likely failure modes
+You can move on when:
 
-### 2. Realism Has a Cost
+- A first drone-vs-drone task exists.
+- Rollouts are stable enough for controlled experiments.
+- You have a 3D observation/action design note.
+- You know the next research variable to test.
 
-Every increase in realism adds complexity in:
+## Avoid
 
-- training stability
-- sensor pipeline cost
-- environment debugging
-- evaluation complexity
-
-Only include realism that supports the research question.
-
-### 3. The End of the Roadmap Is the Start of Real Research Iteration
-
-Once this phase works, the roadmap ends and your research loop begins:
-
-- propose hypothesis
-- modify representation or reward or curriculum
-- run controlled ablations
-- compare behavior and metrics
-
-## Deliverables
-
-Before leaving this phase, produce:
-
-- one first drone-versus-drone task definition
-- one first stable training or rollout result
-- one note on 3D observation and action design
-- one follow-up plan for scaling difficulty or agent count
-
-## Common Mistakes In This Phase
-
-### Mistake 1: Making the World Fully Realistic Too Soon
-
-Fix:
-
-- increase realism in layers, not in one jump
-
-### Mistake 2: Changing Representation, Control, and Agent Dynamics Together
-
-Fix:
-
-- keep at least some earlier stabilized choices unchanged
-
-### Mistake 3: Scaling Agent Count Before Two-Agent Stability Exists
-
-Fix:
-
-- prove the two-agent case first
-
-## Exit Criteria
-
-You are done with Phase 7 only if:
-
-- a first drone-versus-drone pursuit-evasion task exists
-- the task is stable enough to run controlled experiments
-- you know what your next research variables are
-- you are no longer using the roadmap to guess what to build next
-
-## What You Should Learn After Finishing The Roadmap
-
-After finishing all phases, your learning shifts from platform learning to research iteration.
-
-The next topics to pursue depend on your specific thesis extension goals, but likely include:
-
-- centralized critic or alternative MARL training schemes
-- richer sensing and partial observability
-- procedural 3D urban scene generation at scale
-- robustness and domain randomization
-- sim-to-real-oriented abstraction choices
-- communication-aware multi-agent control
-
-At that point, you should no longer ask "How do I learn Isaac?" You should ask "Which experiment do I run next, and what hypothesis am I testing?"
+- Making the environment fully realistic immediately.
+- Importing custom drone assets before the built-in/reference drone is insufficient.
+- Scaling agent count before two-agent drone-vs-drone is stable.
