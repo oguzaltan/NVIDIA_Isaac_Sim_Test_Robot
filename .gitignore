@@ -1,2 +1,7 @@
 *.pdf
 .venv/
+.vscode/
+__pycache__/
+*.pyc
+.github/
+.git/
